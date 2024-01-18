@@ -1,0 +1,40 @@
+version: '3.9'
+
+networks:
+  order-network:
+    driver: bridge
+    name: order-network
+
+services:
+  db:
+    container_name: order-db
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postuser
+      - POSTGRES_PASSWORD=postpass
+      - POSTGRES_DB=order
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - order-network
+    healthcheck:
+      test:  ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  prderapi:
+    container_name: order-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - order-network
+    depends_on:
+      db:
+        condition: service_healthy
