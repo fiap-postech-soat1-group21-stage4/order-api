@@ -1,195 +1,175 @@
 package controller_test
 
-// import (
-// 	"bytes"
-// 	"context"
-// 	"encoding/json"
-// 	"fmt"
-// 	"net/http"
-// 	"net/http/httptest"
-// 	"strings"
-// 	"testing"
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"strconv"
+	"strings"
+	"testing"
 
-// 	"github.com/cucumber/godog"
-// 	"github.com/fiap-postech-soat1-group21/customer-api/customer-api/adapter/handler/controller"
-// 	"github.com/fiap-postech-soat1-group21/customer-api/customer-api/adapter/model"
-// 	"github.com/fiap-postech-soat1-group21/customer-api/customer-api/internal/domain/entity"
-// 	mocks "github.com/fiap-postech-soat1-group21/customer-api/customer-api/internal/domain/port/mocks"
-// 	"github.com/gin-gonic/gin"
-// 	"github.com/google/uuid"
-// 	"github.com/stretchr/testify/assert"
-// 	"github.com/stretchr/testify/mock"
-// )
+	"github.com/cucumber/godog"
+	"github.com/fiap-postech-soat1-group21/order-api/order-api/adapter/handler/controller"
+	"github.com/fiap-postech-soat1-group21/order-api/order-api/adapter/model"
+	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/entity"
+	mocks "github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/port/mocks"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+)
 
-// var (
-// 	customerModelInput = &model.CustomerRequestDTO{
-// 		Name:  "João",
-// 		CPF:   "12312312312",
-// 		Email: "joao@email.com",
-// 	}
+var (
+	orderModelInput = &model.OrderRequestDTO{
+		CustomerID: uuid.MustParse("6ba7b810-9dad-11d1-80b4-00c04fd430c8"),
+		Items: []model.ItemsDTO{
+			{ProductID: uuid.MustParse("550e8400-e29b-41d4-a716-446655440000"), Quantity: 2},
+			{ProductID: uuid.MustParse("6ba7b810-9dad-11d1-80b4-00c04fd430c8"), Quantity: 1},
+		},
+	}
 
-// 	customerEntityInput = &entity.Customer{
-// 		Name:  "João",
-// 		CPF:   "12312312312",
-// 		Email: "joao@email.com",
-// 	}
+	orderEntityOutput = &entity.Order{
+		ID:         uuid.MustParse("123e4567-e89b-12d3-a456-426614174001"),
+		CustomerID: orderModelInput.CustomerID,
+		Status:     entity.Pending,
+	}
 
-// 	customerEntityOutput = &entity.Customer{
-// 		ID:    uuid.MustParse("8c2b51bf-7b4c-4a4b-a024-f283576cf190"),
-// 		Name:  "João",
-// 		CPF:   "12312312312",
-// 		Email: "joao@email.com",
-// 	}
+	orderItemsOutput = []*entity.OrderItems{
+		{OrderID: orderEntityOutput.ID, ProductID: orderModelInput.Items[0].ProductID, Quantity: orderModelInput.Items[0].Quantity},
+		{OrderID: orderEntityOutput.ID, ProductID: orderModelInput.Items[1].ProductID, Quantity: orderModelInput.Items[1].Quantity},
+	}
+)
 
-// 	customerModelOutput = &model.CustomerResponseDTO{
-// 		ID:    uuid.MustParse("8c2b51bf-7b4c-4a4b-a024-f283576cf190"),
-// 		Name:  "João",
-// 		CPF:   "12312312312",
-// 		Email: "joao@email.com",
-// 	}
+type handlerContext struct {
+	handler     *controller.Handler
+	w           *httptest.ResponseRecorder
+	req         *http.Request
+	err         error
+	body        []byte
+	usecaseMock *mocks.OrderUseCase
+}
 
-// 	retrievePath = "/customer/12312312312"
+func (h *handlerContext) theFollowingOrderDetails(table *godog.Table) error {
+	orderModelInput = &model.OrderRequestDTO{
+		CustomerID: uuid.MustParse(table.Rows[1].Cells[0].Value),
+		Items: []model.ItemsDTO{
+			{ProductID: uuid.MustParse(table.Rows[1].Cells[1].Value), Quantity: atoi(table.Rows[1].Cells[2].Value)},
+			{ProductID: uuid.MustParse(table.Rows[2].Cells[1].Value), Quantity: atoi(table.Rows[2].Cells[2].Value)},
+		},
+	}
+	return nil
+}
 
-// 	cpf = &entity.Customer{
-// 		CPF: "12312312312",
-// 	}
-// )
+func (h *handlerContext) aRequestIsMadeToCreateTheOrder() error {
+	jsonBytes, err := json.Marshal(orderModelInput)
+	if err != nil {
+		return err
+	}
 
-// type handlerContext struct {
-// 	handler *controller.Handler
-// 	w       *httptest.ResponseRecorder
-// 	req     *http.Request
-// 	err     error
-// 	body    []byte
-// }
+	h.req = httptest.NewRequest(http.MethodPost, "/orders", bytes.NewBuffer(jsonBytes))
+	h.w = httptest.NewRecorder()
 
-// func (h *handlerContext) theFollowingCustomerDetails(table *godog.Table) error {
-// 	customerModelInput = &model.CustomerRequestDTO{
-// 		Name:  table.Rows[1].Cells[0].Value,
-// 		CPF:   table.Rows[1].Cells[1].Value,
-// 		Email: table.Rows[1].Cells[2].Value,
-// 	}
-// 	return nil
-// }
+	ctxGin, _ := gin.CreateTestContext(h.w)
+	ctxGin.Request = h.req
 
-// func (h *handlerContext) aRequestIsMadeToCreateTheCustomer() error {
-// 	jsonBytes, err := json.Marshal(customerModelInput)
-// 	if err != nil {
-// 		return err
-// 	}
+	h.usecaseMock = &mocks.OrderUseCase{}
+	h.usecaseMock.On("CreateOrder", ctxGin, mock.AnythingOfType("*entity.Order")).Return(orderEntityOutput, h.err).Once()
+	h.usecaseMock.On("CreateOrderItems", ctxGin, mock.AnythingOfType("[]*entity.OrderItems")).Return(orderItemsOutput, h.err).Once()
 
-// 	h.req = httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(jsonBytes))
-// 	h.w = httptest.NewRecorder()
+	h.handler = controller.NewHandler(h.usecaseMock)
+	h.handler.CreateOrder(ctxGin)
 
-// 	ctxGin, _ := gin.CreateTestContext(h.w)
-// 	ctxGin.Request = h.req
+	res := h.w.Result()
+	defer res.Body.Close()
+	h.body = h.w.Body.Bytes()
 
-// 	usecaseMock := &mocks.CustomerUseCase{}
-// 	usecaseMock.On("CreateCustomer", ctxGin, customerEntityInput).Return(customerEntityOutput, h.err).Once()
+	return nil
+}
 
-// 	h.handler = controller.NewHandler(usecaseMock)
-// 	h.handler.CreateCustomer(ctxGin)
+func (h *handlerContext) theResponseShouldHaveStatusCode(statusCode int) error {
+	return assertExpectedAndActual(assert.Equal, statusCode, h.w.Code, "status code")
+}
 
-// 	res := h.w.Result()
-// 	defer res.Body.Close()
-// 	h.body = h.w.Body.Bytes()
+func (h *handlerContext) theResponseBodyShouldMatchTheExpectedOrderDetails() error {
+	wantGot, err := json.Marshal(model.OrderResponseDTO{
+		ID:         orderEntityOutput.ID,
+		Status:     orderEntityOutput.Status,
+		CustomerID: orderEntityOutput.CustomerID,
+		CreatedAt:  orderEntityOutput.CreatedAt,
+		UpdatedAt:  orderEntityOutput.UpdatedAt,
+		Items:      orderItemsOutput,
+	})
+	if err != nil {
+		return err
+	}
 
-// 	return nil
-// }
+	return assertExpectedAndActual(assert.Equal, string(wantGot), strings.TrimSuffix(h.w.Body.String(), "\n"), "response body")
+}
 
-// func (h *handlerContext) theResponseShouldHaveStatusCode(statusCode int) error {
-// 	return assertExpectedAndActual(assert.Equal, statusCode, h.w.Code, "status code")
-// }
+func atoi(s string) int {
+	v, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
 
-// func (h *handlerContext) theResponseBodyShouldMatchTheExpectedCustomerDetails() error {
-// 	wantGot, err := json.Marshal(customerModelOutput)
-// 	if err != nil {
-// 		return err
-// 	}
+func assertExpectedAndActual(a expectedAndActualAssertion, expected, actual interface{}, msgAndArgs ...interface{}) error {
+	var t asserter
+	a(&t, expected, actual, msgAndArgs...)
+	return t.err
+}
 
-// 	return assertExpectedAndActual(assert.Equal, string(wantGot), strings.TrimSuffix(h.w.Body.String(), "\n"), "response body")
-// }
+type expectedAndActualAssertion func(t assert.TestingT, expected, actual interface{}, msgAndArgs ...interface{}) bool
 
-// func (h *handlerContext) aCustomerWithCPFExists(cpf string) error {
-// 	return nil
-// }
+type asserter struct {
+	err error
+}
 
-// func (h *handlerContext) aRequestIsMadeToRetrieveTheCustomer() error {
-// 	req := httptest.NewRequest(http.MethodGet, retrievePath, nil)
-// 	h.w = httptest.NewRecorder()
+func (a *asserter) Errorf(format string, args ...interface{}) {
+	a.err = fmt.Errorf(format, args...)
+}
 
-// 	_, engine := gin.CreateTestContext(h.w)
+// InitializeScenario initializes the context for godog scenarios
+func InitializeScenario(s *godog.ScenarioContext) {
+	h := &handlerContext{}
+	s.Given(`^the following order details$`, h.theFollowingOrderDetails)
+	s.When(`^a request is made to create the order$`, h.aRequestIsMadeToCreateTheOrder)
+	s.Then(`^the response should have status code (\d+)$`, h.theResponseShouldHaveStatusCode)
+	s.Step(`^the response body should match the expected order details$`, h.theResponseBodyShouldMatchTheExpectedOrderDetails)
 
-// 	usecaseMock := &mocks.CustomerUseCase{}
-// 	usecaseMock.
-// 		On("RetrieveCustomer", mock.AnythingOfType("*gin.Context"), cpf).Return(customerEntityOutput, h.err).Once()
+	s.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+		h.err = nil
+		return ctx, nil
+	})
 
-// 	h.handler = controller.NewHandler(usecaseMock)
+	s.After(func(ctx context.Context, sc *godog.Scenario, err error) (context.Context, error) {
+		return ctx, nil
+	})
+}
 
-// 	engine.GET("/customer/:cpf", h.handler.RetrieveCustomer)
-// 	engine.ServeHTTP(h.w, req)
+// TestFeatures runs the godog feature tests
+func TestFeatures(t *testing.T) {
+	suite := godog.TestSuite{
+		Name:                 "http",
+		ScenarioInitializer:  InitializeScenario,
+		TestSuiteInitializer: InitializeTestSuite,
+		Options: &godog.Options{
+			Format:   "pretty",
+			Paths:    []string{"../../../features/http.feature"},
+			TestingT: t,
+		},
+	}
 
-// 	res := h.w.Result()
-// 	defer res.Body.Close()
-// 	h.body = h.w.Body.Bytes()
+	if suite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run feature tests")
+	}
+}
 
-// 	return nil
-// }
+// InitializeTestSuite initializes the godog test suite
+func InitializeTestSuite(ctx *godog.TestSuiteContext) {}
 
-// // assertExpectedAndActual is a helper function to allow the step function to call
-// // assertion functions where you want to compare an expected and an actual value.
-// func assertExpectedAndActual(a expectedAndActualAssertion, expected, actual interface{}, msgAndArgs ...interface{}) error {
-// 	var t asserter
-// 	a(&t, expected, actual, msgAndArgs...)
-// 	return t.err
-// }
-
-// type expectedAndActualAssertion func(t assert.TestingT, expected, actual interface{}, msgAndArgs ...interface{}) bool
-
-// // asserter is used to be able to retrieve the error reported by the called assertion
-// type asserter struct {
-// 	err error
-// }
-
-// // Errorf is used by the called assertion to report an error
-// func (a *asserter) Errorf(format string, args ...interface{}) {
-// 	a.err = fmt.Errorf(format, args...)
-// }
-
-// func TestFeatures(t *testing.T) {
-// 	suite := godog.TestSuite{
-// 		Name:                 "http",
-// 		ScenarioInitializer:  InitializeScenario,
-// 		TestSuiteInitializer: InitializeTestSuite,
-// 		Options: &godog.Options{
-// 			Format:   "pretty",
-// 			Paths:    []string{"../../../features/http.feature"},
-// 			TestingT: t,
-// 		},
-// 	}
-
-// 	if suite.Run() != 0 {
-// 		t.Fatal("non-zero status returned, failed to run feature tests")
-// 	}
-// }
-
-// func InitializeScenario(s *godog.ScenarioContext) {
-// 	h := &handlerContext{}
-// 	s.Given(`^the following customer details`, h.theFollowingCustomerDetails)
-// 	s.When(`^a request is made to create the customer`, h.aRequestIsMadeToCreateTheCustomer)
-// 	s.Then(`^the response should have status code (\d+)`, h.theResponseShouldHaveStatusCode)
-// 	s.Step(`^the response body should match the expected customer details`, h.theResponseBodyShouldMatchTheExpectedCustomerDetails)
-// 	s.Given(`^a customer with CPF "([^"]*)" exists`, h.aCustomerWithCPFExists)
-// 	s.When(`^a request is made to retrieve the customer`, h.aRequestIsMadeToRetrieveTheCustomer)
-
-// 	s.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-// 		h.err = nil
-// 		return ctx, nil
-// 	})
-
-// 	s.After(func(ctx context.Context, sc *godog.Scenario, err error) (context.Context, error) {
-// 		return ctx, nil
-// 	})
-// }
-
-// func InitializeTestSuite(ctx *godog.TestSuiteContext) {}
+// TODO: Import necessary packages and define other utility functions if needed.
