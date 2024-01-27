@@ -6,12 +6,22 @@ on:
       types: [opened, synchronize, reopened]
 name: Main Workflow
 jobs:
-  sonarcloud:
+  ci-pipeline:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21.6'
+
+    - name: Test &Coverage
+      run: go test -v -coverprofile=coverage.out ./.../; go tool cover -func coverage.out
+
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
