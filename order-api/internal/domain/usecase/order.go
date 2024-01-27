@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/entity"
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/port"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/entity"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/port"
 	"github.com/google/uuid"
 )
 

@@ -1,4 +1,4 @@
-module github.com/fiap-postech-soat1-group21/order-api
+module github.com/fiap-postech-soat1-group21-stage4/order-api
 
 go 1.21.5
 

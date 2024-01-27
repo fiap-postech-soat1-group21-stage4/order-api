@@ -1,8 +1,8 @@
 package manage
 
 import (
-	o "github.com/fiap-postech-soat1-group21/order-api/order-api/adapter/handler/controller"
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/port"
+	o "github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/adapter/handler/controller"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/port"
 	"github.com/gin-gonic/gin"
 )
 

@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/cucumber/godog"
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/entity"
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/port"
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/port/mocks"
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/usecase"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/entity"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/port"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/port/mocks"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/usecase"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )

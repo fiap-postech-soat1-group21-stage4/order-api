@@ -9,10 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	manage "github.com/fiap-postech-soat1-group21/order-api/order-api/adapter/handler"
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/adapter/repository"
+	manage "github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/adapter/handler"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/adapter/repository"
 
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/usecase"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/usecase"
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
 )

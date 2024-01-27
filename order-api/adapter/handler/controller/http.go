@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/adapter/model"
-	"github.com/fiap-postech-soat1-group21/order-api/order-api/internal/domain/entity"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/adapter/model"
+	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/entity"
 	"github.com/gin-gonic/gin"
 )
 

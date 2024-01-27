@@ -4,7 +4,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	handler "github.com/fiap-postech-soat1-group21/order-api/order-api/adapter/handler/controller"
+	handler "github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/adapter/handler/controller"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
