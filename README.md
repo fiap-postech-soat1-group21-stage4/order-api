@@ -1,7 +1,5 @@
 # Software Architecture - Tech Challenge
 
-Veja a Wiki do projeto em: [https://github.com/b-bianca/soat1-challenge1/wiki](https://github.com/b-bianca/soat1-challenge1/wiki)
-
 <details>
 
 <summary>Entrega FASE 4 -Arquitetura de Microsserviços</summary>
