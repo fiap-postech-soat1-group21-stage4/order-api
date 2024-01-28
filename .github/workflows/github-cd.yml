@@ -6,13 +6,18 @@ on:
     types: 
       - completed
 jobs:
-  validate:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: Test
-      run: echo "Teste"
+    - name: Login to Docker Hub
+      run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build Docker image
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/order-api:latest .
+
+    - name: Push Docker image
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/order-api:latest
