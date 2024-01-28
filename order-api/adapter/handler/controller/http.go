@@ -64,8 +64,6 @@ func (h *Handler) CreateOrder(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Print(res)
-
 	orderItems := make([]*entity.OrderItems, 0, MaxQuantityPerOrder)
 
 	for _, item := range input.Items {
@@ -76,7 +74,7 @@ func (h *Handler) CreateOrder(ctx *gin.Context) {
 			Quantity:  item.Quantity,
 		})
 	}
-	fmt.Print(orderItems)
+
 	resItems, err := h.useCase.CreateOrderItems(ctx, orderItems)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)

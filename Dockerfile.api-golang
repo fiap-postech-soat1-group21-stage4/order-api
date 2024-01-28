@@ -2,7 +2,7 @@ FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
-COPY /orderapi /
+COPY /order-api /
 COPY /go.mod /
 COPY /go.sum /
 COPY /sonar-project.properties /

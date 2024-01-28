@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/fiap-postech-soat1-group21-stage4/order-api/order-api/internal/domain/entity"
 	"github.com/google/uuid"
@@ -45,7 +44,6 @@ func (o *Order) GetOrderItems(ctx context.Context, orderID uuid.UUID) ([]*entity
 	var orderItems []*entity.OrderItems
 	result := dbFn.Table("order_item").Where("order_id = ?", orderID).Find(&orderItems)
 
-	fmt.Sprintf("%+v", orderItems)
 	if result.Error != nil {
 		return nil, result.Error
 	}
