@@ -24,7 +24,7 @@ func TestNew(t *testing.T) {
 		})
 }
 
-func TestRepository_SetMaxOpenConns(t *testing.T) {
+func TestSetMaxOpenConns(t *testing.T) {
 	t.Run("when everything goes ok, should return no error", func(t *testing.T) {
 		db, _, _ := sqlmock.New()
 		dbGorm, _ := gorm.Open(postgres.New(postgres.Config{Conn: db}))
@@ -40,7 +40,7 @@ func TestRepository_SetMaxOpenConns(t *testing.T) {
 	})
 }
 
-func TestRepository_SetMaxIdleConns(t *testing.T) {
+func TestSetMaxIdleConns(t *testing.T) {
 	t.Run("when everything goes ok, should return no error", func(t *testing.T) {
 		db, _, _ := sqlmock.New()
 		dbGorm, _ := gorm.Open(postgres.New(postgres.Config{Conn: db}))
@@ -52,7 +52,7 @@ func TestRepository_SetMaxIdleConns(t *testing.T) {
 	})
 }
 
-func TestRepository_SetConnMaxLifetime(t *testing.T) {
+func TestSetConnMaxLifetime(t *testing.T) {
 	t.Run("when everything goes ok, should return no error", func(t *testing.T) {
 		db, _, _ := sqlmock.New()
 		dbGorm, _ := gorm.Open(postgres.New(postgres.Config{Conn: db}))
@@ -64,7 +64,7 @@ func TestRepository_SetConnMaxLifetime(t *testing.T) {
 	})
 }
 
-func TestRepository_SetConnMaxIdleTime(t *testing.T) {
+func TestSetConnMaxIdleTime(t *testing.T) {
 	t.Run("when everything goes ok, should return no error", func(t *testing.T) {
 		db, _, _ := sqlmock.New()
 		dbGorm, _ := gorm.Open(postgres.New(postgres.Config{Conn: db}))
