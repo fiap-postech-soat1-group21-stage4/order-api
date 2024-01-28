@@ -49,7 +49,7 @@ POSTGRES_DSN=user=puser password=ppass dbname=order host=database-postgres port=
 Notas: dada a natureza desse projeto, o arquivo ".env" já está na pasta raiz, assim como, intencionalmente, há valores ***hard coded*** no código.
 
 ### Executar o projeto
-É possivel executar o projeto através do Makefile, a partir da linha de comando. Mas caso queira, abaixo segue como executar o docker manualmente, e depois rode make run-scheduler.
+É possivel executar o projeto através do Makefile, a partir da linha de comando.
 ~~~bash
 make run-project
 ~~~
