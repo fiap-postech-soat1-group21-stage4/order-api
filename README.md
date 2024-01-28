@@ -1,5 +1,7 @@
 [![CI pipeline](https://github.com/fiap-postech-soat1-group21-stage4/order-api/actions/workflows/github-ci.yml/badge.svg)](https://github.com/fiap-postech-soat1-group21-stage4/order-api/actions/workflows/github-ci.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fiap-postech-soat1-group21-stage4_order-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=fiap-postech-soat1-group21-stage4_order-api) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fiap-postech-soat1-group21-stage4_order-api&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=fiap-postech-soat1-group21-stage4_order-api) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=fiap-postech-soat1-group21-stage4_order-api&metric=bugs)](https://sonarcloud.io/summary/new_code?id=fiap-postech-soat1-group21-stage4_order-api)
 
+[![CD pipeline](https://github.com/fiap-postech-soat1-group21-stage4/order-api/actions/workflows/github-cd.yml/badge.svg)](https://github.com/fiap-postech-soat1-group21-stage4/order-api/actions/workflows/github-cd.yml)
+
 # Software Architecture - Tech Challenge
 
 <details>
