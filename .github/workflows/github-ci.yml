@@ -1,12 +1,12 @@
+name: CI pipeline
 on:
   push:
     branches:
       - main
   pull_request:
       types: [opened, synchronize, reopened]
-name: Main Workflow
 jobs:
-  ci-pipeline:
+  validate:
     runs-on: ubuntu-latest
 
     steps:
