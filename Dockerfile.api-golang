@@ -12,8 +12,8 @@ WORKDIR /app
 
 COPY --from=builder /app/orderapi .
 
-ENV POSTGRES_DSN=user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} host=${POSTGRES_HOST} port=${POSTGRES_CONTAINER_PORT} sslmode=disable
-ENV API_PORT=${API_CONTAINER_PORT}
+ENV POSTGRES_DSN=""
+ENV API_PORT=""
 
 # Adicionando usuário não-root
 RUN adduser -D -u 1001 appuser

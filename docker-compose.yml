@@ -30,7 +30,7 @@ services:
   orderapi:
     container_name: order-api
     environment:
-      - POSTGRES_DSN=user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=$POSTGRES_DB host=$POSTGRES_HOST port=$POSTGRES_CONTAINER_PORT sslmode=disable
+      - POSTGRES_DSN=$POSTGRES_DSN
       - API_PORT=$API_CONTAINER_PORT
     build:
       context: .
