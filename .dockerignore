@@ -1,0 +1,8 @@
+.env
+.dockerignore
+.git
+.gitignore
+.vscode
+.idea
+*.md
+.scannerwork
