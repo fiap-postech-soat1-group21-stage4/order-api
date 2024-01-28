@@ -1,0 +1,12 @@
+FROM golang:1.20-alpine
+
+WORKDIR /app
+
+COPY . .
+
+ENV POSTGRES_DSN=user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} host=${POSTGRES_HOST} port=${POSTGRES_CONTAINER_PORT} sslmode=disable
+ENV API_PORT=${API_CONTAINER_PORT}
+
+RUN go build -o orderapi order-api/cmd/main.go
+
+CMD ["./orderapi"]
